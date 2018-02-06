@@ -7,159 +7,168 @@
 
 
 <dom-module id="oc-view-addresses">
-  <template>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <style include="shop-button" is="custom-style">
+    <template>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <style include="shop-button" is="custom-style">
 
-      :host {
-        display: block;
-        background: #fff;
-        color: #000;
-      }
+            :host {
+                display: block;
+                background: #fff;
+                color: #000;
+            }
 
-      h3 {
-        font-size: 1.13em !important;
-        margin: 10px 0 !important;
-      }
+            h3 {
+                font-size: 1.13em !important;
+                margin: 10px 0 !important;
+            }
 
-      paper-item {
-        --paper-item-selected: {
-          color: #e0992f;
-        };
-      }
+            paper-item {
+                --paper-item-selected: {
+                    color: #e0992f;
+                };
+            }
 
-      .detail-view {
-        padding-top: 5px;
-        color: black;
-        opacity: 0.8;
-        border-top: 1px solid lightgrey;
-      }
-    </style>
-    <div class="container-fluid">
+            .detail-view {
+                padding-top: 5px;
+                color: black;
+                opacity: 0.8;
+                border-top: 1px solid lightgrey;
+            }
+        </style>
+        <div class="container-fluid">
 
-      <div class="row">
-        <div class="col-xs-12">
-          <template is="dom-if" if="[[_empty]]">
-            No Records to display
-          </template>
-        </div>
-      </div>
-
-      <div class="row">
-        <paper-listbox id="listbox" attr-for-selected="record" selected="{{_selectedRecord}}">
-          <template is="dom-repeat" items="[[records]]">
-            <paper-item style="padding: 0" record="[[item]]">
-              <paper-card style="width: 100%; margin-bottom: 3px">
-                <div class="card-content">
-                  <div class="row">
-                    <div class="col-xs-8">
-                      <div class="row">
-                        <div class="col-xs-12">
-                          [[item.businessName]]
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-xs-12">
-                          <span style="opacity: 0.5">[[item.city]]</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Place Holder for right side of card -->
-                    <div class="col-xs-4">
-                      <div class="pull-right"></div>
-                    </div>
-                  </div>
-
-                  <div class="row" class="detail-view"
-                       hidden="[[!_isSelected(selectedItems.*, item)]]"
-                       style="padding-top: 5px; color: black; opacity: 0.8; border-top: 1px solid lightgrey;">
-                    <div class="col-xs-12">
-                      <div>[[item.name]]</div>
-                    </div>
-                    <div class="col-xs-12">
-                      <div>[[item.streetNumber]] [[item.streetName]]</div>
-                    </div>
-                    <div class="col-xs-12">
-                      <div>[[item.suburb]]</div>
-                    </div>
-                    <div class="col-xs-12">
-                      <div>[[item.postalCode]]</div>
-                    </div>
-                  </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <template is="dom-if" if="[[_empty]]">
+                        No Records to display
+                    </template>
                 </div>
-              </paper-card>
-            </paper-item>
-          </template>
-        </paper-listbox>
-      </div>
-    </div>
-  </template>
-  <script>
-	  /**
-	   * `oc-view-addresses`
-	   * List of Addresses
-	   *
-	   * @customElement
-	   * @polymer
-	   * @demo demo/index.html
-	   */
-	  class OcViewAddresses extends Ordercloud.Formatter(Polymer.Element) {
-		  static get is() {
-			  return 'oc-view-addresses';
-		  }
+            </div>
 
-		  static get properties() {
-			  return {
-				  records: {
-					  type: Array,
-					  value: [],
-					  observer: '_isEmpty'
-				  },
-				  _empty: {
-					  Type: Boolean,
-					  value: true
-				  },
-				  _selectedRecord: {
-					  type: Object,
-					  observer: '_onRecordSelected'
-				  },
-				  selectedItems: {
-					  type: Object,
-					  value: {}
-				  }
-			  };
-		  }
+            <div class="row">
+                <paper-listbox id="listbox" attr-for-selected="record" selectedValues="{{_selectedRecord}}" multi>
+                    <template is="dom-repeat" items="[[records]]">
+                        <paper-item style="padding: 0" record="[[item]]">
+                            <paper-card style="width: 100%; margin-bottom: 3px">
+                                <div class="card-content">
+                                    <div class="row">
+                                        <div class="col-xs-8">
+                                            <div class="row">
+                                                <div class="col-xs-12">
+                                                    [[item.businessName]]
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xs-12">
+                                                    <span style="opacity: 0.5">[[item.city]]</span>
+                                                </div>
+                                            </div>
+                                        </div>
 
-		  ready() {
-			  super.ready();
-		  }
+                                        <!-- Place Holder for right side of card -->
+                                        <div class="col-xs-4">
+                                            <div class="pull-right"></div>
+                                        </div>
+                                    </div>
 
-		  _onRecordSelected(newSelected, oldSelected) {
-			  if (oldSelected) {
-				  this.selectedItems[oldSelected.id] = false;
-				  this.notifyPath('selectedItems.' + [oldSelected.id]);
-			  }
+                                    <div class="row" class="detail-view"
+                                         hidden="[[!_isSelected(selectedItems.*, item)]]"
+                                         style="padding-top: 5px; color: black; opacity: 0.8; border-top: 1px solid lightgrey;">
+                                        <div class="col-xs-12">
+                                            <div>[[item.name]]</div>
+                                        </div>
+                                        <div class="col-xs-12">
+                                            <div>[[item.streetNumber]] [[item.streetName]]</div>
+                                        </div>
+                                        <div class="col-xs-12">
+                                            <div>[[item.suburb]]</div>
+                                        </div>
+                                        <div class="col-xs-12">
+                                            <div>[[item.postalCode]]</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </paper-card>
+                        </paper-item>
+                    </template>
+                </paper-listbox>
+            </div>
+        </div>
+    </template>
+    <script>
+		/**
+		 * `oc-view-addresses`
+		 * List of Addresses
+		 *
+		 * @customElement
+		 * @polymer
+		 * @demo demo/index.html
+		 */
+		class OcViewAddresses extends Ordercloud.Formatter(Polymer.Element) {
+			static get is() {
+				return 'oc-view-addresses';
+			}
 
-			  this.selectedItems[newSelected.id] = true;
-			  this.notifyPath('selectedItems.' + [newSelected.id]);
-		  }
+			static get properties() {
+				return {
+					records: {
+						type: Array,
+						value: [],
+						observer: '_isEmpty'
+					},
+					_empty: {
+						Type: Boolean,
+						value: true
+					},
+					_selectedRecord: {
+						type: Array,
+						value: [],
+						observer: '_onRecordSelected'
+					},
+					_prevSelected: {
+						type: Object,
+					},
+					selectedItems: {
+						type: Object,
+						value: {}
+					}
+				};
+			}
 
-		  //check if there are records
-		  _isEmpty() {
-			  this._empty = !this.records.length > 0;
-			  console.log(this._empty);
-		  }
+			ready() {
+				super.ready();
 
-		  _isSelected(i, j) {
-			  if (!this.selectedItems[j.id] && this.selectedItems[j.id] !== false) {
-				  this.selectedItems[j.id] = false;
-			  }
+				this.$.listbox.addEventListener("selected-values-changed", (e) => {
+					const selectedItems = e.target.selectedValues;
+					const removedItems = e.detail.value.indexSplices[0].removed;
 
-			  return this.selectedItems[j.id];
-		  }
-	  }
+					for (let i = 0; i < selectedItems.length; i++) {
+						this.selectedItems[selectedItems[i].id] = true;
+						this.notifyPath('selectedItems.' + [selectedItems[i].id]);
+					}
 
-	  window.customElements.define(OcViewAddresses.is, OcViewAddresses);
-  </script>
+					for (let i = 0; i < removedItems.length; i++) {
+						this.selectedItems[removedItems[i].id] = false;
+						this.notifyPath('selectedItems.' + [removedItems[i].id]);
+					}
+				})
+			}
+
+			//check if there are records
+			_isEmpty() {
+				this._empty = !this.records.length > 0;
+				console.log(this._empty);
+			}
+
+			_isSelected(i, j) {
+				if (!this.selectedItems[j.id] && this.selectedItems[j.id] !== false) {
+					this.selectedItems[j.id] = false;
+				}
+
+				return this.selectedItems[j.id];
+			}
+		}
+
+		window.customElements.define(OcViewAddresses.is, OcViewAddresses);
+    </script>
 </dom-module>
