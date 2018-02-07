@@ -3,6 +3,10 @@
 <link rel="import" href="../paper-card/paper-card.html">
 <link rel="import" href="../paper-item/paper-item.html">
 <link rel="import" href="../paper-button/paper-button.html">
+
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../iron-icons/editor-icons.html">
+
 <link rel="import" href="../oc-core-utils/oc-formatter.html">
 
 
@@ -47,7 +51,7 @@
 
             <div class="row">
                 <paper-listbox id="listbox" attr-for-selected="record" selectedValues="{{_selectedRecord}}" multi>
-                    <template is="dom-repeat" items="[[records]]">
+                    <template id="listItemRepeat" is="dom-repeat" items="[[records]]">
                         <paper-item style="padding: 0" record="[[item]]">
                             <paper-card style="width: 100%; margin-bottom: 3px">
                                 <div class="card-content">
@@ -67,7 +71,11 @@
 
                                         <!-- Place Holder for right side of card -->
                                         <div class="col-xs-4">
-                                            <div class="pull-right"></div>
+                                            <div class="pull-right">
+                                                <paper-button on-tap="_onEdit" data-args="[[item]]">
+                                                    <iron-icon icon="editor:mode-edit"></iron-icon>
+                                                </paper-button>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -123,10 +131,6 @@
 					_selectedRecord: {
 						type: Array,
 						value: [],
-						observer: '_onRecordSelected'
-					},
-					_prevSelected: {
-						type: Object,
 					},
 					selectedItems: {
 						type: Object,
@@ -140,24 +144,43 @@
 
 				this.$.listbox.addEventListener("selected-values-changed", (e) => {
 					const selectedItems = e.target.selectedValues;
-					const removedItems = e.detail.value.indexSplices[0].removed;
 
 					for (let i = 0; i < selectedItems.length; i++) {
 						this.selectedItems[selectedItems[i].id] = true;
 						this.notifyPath('selectedItems.' + [selectedItems[i].id]);
 					}
 
-					for (let i = 0; i < removedItems.length; i++) {
-						this.selectedItems[removedItems[i].id] = false;
-						this.notifyPath('selectedItems.' + [removedItems[i].id]);
+					if (e.detail.value.indexSplices) {
+						const removedItems = e.detail.value.indexSplices[0].removed;
+
+						for (let i = 0; i < removedItems.length; i++) {
+							this.selectedItems[removedItems[i].id] = false;
+							this.notifyPath('selectedItems.' + [removedItems[i].id]);
+						}
 					}
 				})
+			}
+
+			_onEdit(editItem) {
+				const record = editItem.currentTarget.dataArgs;
+
+				// This url will also need to passed through as n parameter
+				this.dispatchEvent(new CustomEvent('change-page', {
+					bubbles: true, composed: true, detail:
+						{
+							url: '/add-business-address/' + record.id,
+						}
+				}));
 			}
 
 			//check if there are records
 			_isEmpty() {
 				this._empty = !this.records.length > 0;
-				console.log(this._empty);
+
+				// Make sure nothing is selected. This is of if items change, like after editing
+				this.selectedItems = {};
+				this.$.listbox.selectedValues = [];
+
 			}
 
 			_isSelected(i, j) {
